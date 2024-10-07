@@ -13,7 +13,7 @@ tener instalado node.js y path incluido.
 	
  	pip install -r requirements.txt
 
-2.-(opcional) en la carpeta backend/backend/settings.py ajustar conexion con mysql segun sus preferencias.
+2.-en la carpeta backend/backend/settings.py ajustar conexion con mysql segun sus preferencias.
 
 	DATABASES = {  
 	    'default': {  
@@ -26,7 +26,6 @@ tener instalado node.js y path incluido.
 	    }  
 	}
  
- !!! en caso de no utilizar el codigo, eliminar el codigo dentro del archivo. !!!
 
 3.- Crear super usuario.
 
