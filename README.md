@@ -2,8 +2,8 @@ la instalacion del proyecto consiste en dos partes, backend y frontend.
 
 prerequisitos:
 
-  tener instalado xampp (opcional).
-  tener instalado node.js y path incluido.
+tener instalado xampp (opcional).
+tener instalado node.js y path incluido.
 
 
   Backend:
