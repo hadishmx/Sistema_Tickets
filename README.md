@@ -38,7 +38,7 @@ tener instalado node.js y path incluido.
 
   Frontend:
 
-1.- Desde 2da terminal dirigirse a fronend e installar los paquetes.
+1.- Desde 2da terminal dirigirse a fronend e instalar los paquetes.
 
 	npm install
  
