@@ -11,7 +11,7 @@ tener instalado node.js y path incluido.
 
 1.- Desde Terminal dirigirse a la carpeta backend y ejecutar el codigo.
 	
- 	pip install requirements.txt
+ 	pip install -r requirements.txt
 
 2.-(opcional) en la carpeta backend/backend/settings.py ajustar conexion con mysql segun sus preferencias.
 
