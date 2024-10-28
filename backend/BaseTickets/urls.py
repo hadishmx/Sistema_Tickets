@@ -10,4 +10,6 @@ router.register('api/Cliente',ClienteViewSet,'Cliente')
 router.register('api/Cuenta',UserViewSet,'Cuenta')
 
 
+
+
 urlpatterns =router.urls

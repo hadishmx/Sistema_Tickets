@@ -8,6 +8,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import 'vuetify/dist/vuetify.min.css';
 
 
 // Crear una instancia de Axios con configuración personalizada
@@ -22,7 +23,13 @@ const axiosInstance = axios.create({
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    dark: true, // Habilita el tema oscuro globalmente
+  },
 })
+
+
+
 
 // Añadir interceptor para incluir el token en cada petición si está disponible
 axiosInstance.interceptors.request.use(config => {

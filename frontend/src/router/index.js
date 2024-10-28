@@ -13,9 +13,42 @@ const routes = [ //define las ruta de los componente
     {path: '/Login',component:LoginUser, name:'Login'}, 
     {path: '/RegisterUser',component:RegisterUser, name:'RegisterUser'},
     {path: '/AccountUser',component:AccountUser, name:'AccountUser'},
-    {path: '/TiqueList',component:TiqueList, name:'TiqueList'},
-    {path: '/ClienteList',component:ClienteList, name:'ClienteList'},
-    {path: '/AccountsUserList',component:AccountsUserList, name:'AccountsUserList'},
+    {path: '/TiqueList',component:TiqueList, name:'TiqueList',
+      meta:{role: 'Atencion'},
+      beforeEnter: (to, from, next) => {
+        const userRole = localStorage.getItem('Grupo');
+        if (userRole === 'Director General' || userRole === 'Ejecutivo' || userRole === 'Atencion') {
+          next();
+        } else {
+          next('/AccountUser');
+          alert('No tienes Acceso esta Pagina')
+        }
+      }
+    },
+    {path: '/ClienteList',component:ClienteList, name:'ClienteList',
+      meta:{role: 'Ejecutivo'},
+      beforeEnter: (to, from, next) => {
+        const userRole = localStorage.getItem('Grupo');
+        if (userRole === 'Director General' || userRole === 'Ejecutivo') {
+          next();
+        } else {
+          next('/AccountUser');
+          alert('No tienes Acceso esta Pagina')
+        }
+      }
+    },
+    {path: '/AccountsUserList',component:AccountsUserList, name:'AccountsUserList',
+      meta:{role: 'Director General'},
+      beforeEnter: (to, from, next) => {
+        const userRole = localStorage.getItem('Grupo');
+        if (userRole === 'Director General') {
+          next();
+        } else {
+          next('/AccountUser');
+          alert('No tienes Acceso esta Pagina')
+        }
+      }
+    },
     {path: '/Contact',component:Contact, name:'Contact'},
     
   ]

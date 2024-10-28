@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include, re_path
 from BaseTickets import views
-from BaseTickets.views import CustomAuthToken
+from BaseTickets.views import CustomAuthToken,group_and_account
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -27,7 +27,10 @@ urlpatterns = [
     path('',include('BaseTickets.urls')),
     path('login/', views.login),
     re_path('register/', views.register),
-    path('api/login/', CustomAuthToken.as_view(), name='api_login'),
+    path('api/login/', CustomAuthToken.as_view(), name='login'),
+    path('group_and_account/<int:user_id>/', group_and_account, name='group_and_account'),
+    
+
     
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

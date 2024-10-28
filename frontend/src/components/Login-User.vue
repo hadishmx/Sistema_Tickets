@@ -30,13 +30,11 @@ export default {
       };
       
       try {
-        const response = await this.axios.post('http://localhost:8000/api/login/', payload); //obtiene los datos a travez del back y devuelve en una response
+        const response = await this.axios.post('http://localhost:8000/login/', payload); //obtiene los datos a travez del back y devuelve en una response
         console.log(response); 
   
         this.token = response.data.token;  //guardar token en una variable
-        this.user_id = response.data.user_id;
-
-        console.log(this.user_id)
+        this.user_id = response.data.user.id;
         
 
         // Guardadado en local storage
@@ -48,14 +46,28 @@ export default {
         this.axios.defaults.headers.common['Authorization'] = `Token ${this.token}`; // guardar token en la cabezera
         this.$router.push({ name: 'AccountUser' }); // redireccion a account
         console.log(this.axios.defaults.headers.common['Authorization']); //verificar si token esta en la cabezera
-      } catch (error) { //en caso de error de credenciales alertará al usuario
-        if (error.response && error.response.status === 401) {
-          
-          this.errorMessage = error.response.data.error; // Captura el mensaje de error
-          
-          alert('La cuenta esta deshabilitada')
+        console.log(response.data.error);
+        } catch (error) { // en caso de error de credenciales alertará al usuario
+        if (error.response) {
+          // Manejar errores específicos según el estado
+          if (error.response.status === 400) {
+            // Capturar mensajes específicos de la API
+            const errorMessage = error.response.data.error || 'Verifique Usuario y Contraseña';
+            this.errorMessage = errorMessage; // Captura el mensaje de error
+            alert(errorMessage);
+          } else if (error.response.status === 401) {
+            // Para cuentas inactivas
+            this.errorMessage = error.response.data.error || 'Cuenta inactiva';
+            alert(this.errorMessage);
+          } else {
+            // Otros errores
+            this.errorMessage = 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.';
+            alert(this.errorMessage);
+          }
         } else {
-          this.errorMessage = 'Error inesperado, por favor intenta nuevamente.';
+          // Error no relacionado con la respuesta
+          this.errorMessage = 'Error de red. Por favor, compruebe su conexión.';
+          alert(this.errorMessage);
         }
         console.error('Error al iniciar sesión:', error);
       }

@@ -97,6 +97,9 @@ export default {
       // Elimina el token del local storage y actualiza el estado
       localStorage.removeItem('access_token');
       localStorage.removeItem('ID_Account');
+      localStorage.removeItem('Nombre');
+      localStorage.removeItem('Grupo');
+      localStorage.removeItem('Apellido');
       this.eventBusState.isAuthenticated = false;  // Actualiza el estado global
       this.$router.push('/Login');  // Redirige al login
     },

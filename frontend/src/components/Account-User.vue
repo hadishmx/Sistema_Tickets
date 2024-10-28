@@ -4,94 +4,386 @@
         <div class="Account-Title">
             <h1>Datos Personales</h1>
         </div>
+        <v-form @submit.prevent>
         <section class="Display-info" >
-            <section class="personal-info" >
-                <h2>Nombre</h2>
-                <h2>Apellido</h2>
-                <h2>Correo</h2>
-                <h2>RUT</h2>
-                <h2>Fecha Nacimiento</h2>
-                <h2>Teléfono</h2>
-            </section>
-            <section class="personal-info" v-if="Usuariodata && Usuariodata.length > 0">
-                <h2>{{  Usuariodata[0].nombre || 'cargando..' }}</h2>
-                <h2>{{  Usuariodata[0].apellido || 'cargando..' }}</h2>
-                <h2>{{  Usuariodata[0].correo || 'cargando..' }}</h2>
-                <h2>{{  Usuariodata[0].rut || 'cargando..' }}</h2>
-                <h2>{{  Usuariodata[0].fecha_nacimiento || 'cargando..' }}</h2>
-                <h2>{{  Usuariodata[0].telefono || 'cargando..' }}</h2>
+            <section class="personal-info" v-for="(Usuariodata,index) in Usuariodata" :key="Usuariodata">
+
+                <v-text-field
+                    v-model="Usuariodata.nombre"
+                    :counter="50"
+                    :rules="nombreRules"
+                    label="Nombre"
+                    required
+                    variant="underlined"
+                ></v-text-field>
+                <v-text-field
+                    v-model="Usuariodata.apellido"
+                    :counter="50"
+                    :rules="apellidoRules"
+                    label="Apellido"
+                    required
+                    variant="underlined"
+                ></v-text-field>
+                <v-text-field
+                    v-model="Usuariodata.correo"
+                    :rules="correoRules"
+                    label="Correo"
+                    required
+                    variant="underlined"
+                ></v-text-field>
+                <v-text-field
+                    v-model="Usuariodata.rut"
+                    :rules="rutRules"
+                    :counter="10"
+                    label="Rut"
+                    required
+                    variant="underlined"
+                ></v-text-field>
+                <v-text-field
+                    v-model="Usuariodata.telefono"
+                    :rules="telefonoRules"
+                    :counter="10"
+                    label="Telefono"
+                    required
+                    variant="underlined"
+                ></v-text-field>
+                <v-text-field 
+                    v-model="Usuariodata.fecha_nacimiento" 
+                    label="Fecha de Nacimiento"
+                    placeholder="DD-MM-YYYY"
+                    maxlength="10"
+                    :rules="fechaRules"
+                    @input="formatFechaNacimiento"
+                    variant="underlined"
+                >
+                </v-text-field>
+                <v-file-input
+                    :rules="IMGrules"
+                    accept="image/png, image/jpeg, image/bmp"
+                    label="Subir perfil"
+                    placeholder="Elige Tu Imagen"
+                    prepend-icon="mdi-camera"
+                    variant="underlined"
+                ></v-file-input>
+                
             </section>
             <section class="Account-info" >
-                <div class="Avatar-info" >
-                    <img :src="getAvatarUrl(Usuariodata[0].avatar)" alt="Avatar Usuario" class="Avatar-user" v-if="Usuariodata && Usuariodata[0].avatar">
-                    <img :src="EjemploEmoji" alt="" v-else class="Avatar-user">
-                </div>
-                <div class="Account-data" >
-                    <div>
-                        <h2>Usuario</h2> 
-                        <h2>Rol</h2>
-                    </div>
+                <div class="Avatar-info"  >
+                    <img v-if="Usuariodata && Usuariodata.length > 0 && Usuariodata[0].avatar"
+                        :src="getAvatarUrl(Usuariodata[0].avatar)" 
+                        alt="Avatar Usuario" 
+                        class="Avatar-user">
+                    <img v-else 
+                        :src="EjemploEmoji" 
+                        alt="Avatar Usuario" 
+                        class="Avatar-user">
                     <div v-if="Usuariodata && Usuariodata.length > 0">
-                        <h2>{{  Usuariodata[0].user || 'cargando..' }}</h2>
-                        <h2>{{  Usuariodata[0].tipo || 'cargando..' }}</h2>
+                        
+                        <v-text-field
+                            v-model="Usuariodata[0].user"
+                            label="Id Cuenta"
+                            prepend-icon="mdi-account"
+                            variant="underlined"
+                            disabled
+                        ></v-text-field>
+                        <v-text-field
+                        :value="Usuariodata?.[0]?.grupos?.name || 'Sin rol asignado'"
+                        readonly
+                        prepend-icon="mdi-account-group"
+                        variant="underlined"
+                        disabled
+                        ></v-text-field>
+                        
                     </div>
                 </div>
             </section>
+            <section>
+                <div class="Account-data" >
+                    <div>
+                        <v-btn
+                            variant="outlined" 
+                            color="warning"
+                            prepend-icon="mdi-pencil"
+                            type="submit"
+                            @click="guardarDatos"
+                            >
+                            Guardar
+                        </v-btn>
+                    </div>
+                </div>
+            </section>
+            
         </section>
+        </v-form>
     </div>
-  </template>
+</template>
 
 <script>
-import EjemploEmoji from '../assets/EjemploEmoji.jpg';
-import axios from 'axios';
-export default {
-    
-    name: 'AccountUser',
-    data() {
-        return {
-            EjemploEmoji,
-            Usuariodata: null,
-        };
-    },
-    mounted() {
-    this.obtenerDatosUsuario(); // Llamamos la función al montar el componente
-    },
-    methods: {
-        async obtenerDatosUsuario() {
-        try {
-            const token = localStorage.getItem('access_token'); // Obtenemos el token del local storage
-            const response = await axios.get('http://localhost:8000/api/Usuario/', {
-            headers: {
-                Authorization: `Token ${token}`, // token a la cabecera
-            },
-            });
-            this.Usuariodata = Array.from(response.data); // Guardamos los datos del usuario
-            console.log(this.Usuariodata)
-        } catch (error) {
-            console.error('Error al obtener los datos del usuario:', error);
-        }
+    import EjemploEmoji from '../assets/EjemploEmoji.jpg';
+    import axios from 'axios';
+    import { watch } from 'vue';
+    export default {
+        
+        name: 'AccountUser',
+        data() {
+            return {
+                EjemploEmoji,
+                Usuariodata: [],
+                
+                Nombre:"",
+                Apellido:"",
+                Correo:"",
+                fecha_nacimiento:"",
+                Rut:"",
+                avatar:"",
+                Id:null,
+                Grupo:null,
+                nombreRules: [
+                    value => {
+                    // Validar que no contenga símbolos ni números, y que sea máximo de 50 caracteres
+                    const regex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/; // Solo letras (incluyendo acentos, ñ y espacios)
+                    
+                    if (!value) return 'El nombre es requerido.'; // Verificar si está vacío
+                    
+                    if (!regex.test(value)) return 'No debe contener números ni símbolos.';
+                    
+                    if (value.length > 50) return 'Maximo 50 caracteres.';
+                    
+                    return true; // Si pasa todas las validaciones
+                    }
+                ],
+                apellidoRules: [
+                    value => {
+                    // Validar que el valor sea una cadena
+                    if (typeof value !== 'string') return 'El apellido debe ser una cadena.';
+
+                    // Validar que no contenga símbolos ni números, y que sea máximo de 50 caracteres
+                    const regex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/; // Solo letras (incluyendo acentos, ñ y espacios)
+
+                    if (!value) return 'El apellido es requerido.'; // Verificar si está vacío
+
+                    if (!regex.test(value)) return 'No debe contener números ni símbolos.';
+
+                    if (value.length > 50) return 'Máximo 50 caracteres.';
+
+                    return true; // Si pasa todas las validaciones
+                    }
+                ],
+                correoRules: [
+                    value => {
+                    // Validar que el valor esté presente
+                    if (!value) return 'El correo electrónico es requerido.';
+
+                    // Expresión regular para validar el formato del correo electrónico
+                    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                    if (!regex.test(value)) return 'El correo electrónico no es válido.';
+
+                    return true; // Si pasa la validación
+                    }
+                ],
+                rutRules: [
+                    value => {
+                    // Validar que el valor esté presente
+                    if (!value) return 'El RUT es requerido.';
+
+                    // Expresión regular para validar el formato del RUT
+                    const regex = /^\d{7,8}-[0-9Kk]$/;
+
+                    if (!regex.test(value)) return 'El RUT debe estar en el formato 12345678-K.';
+
+                    // Separar el cuerpo y el dígito verificador
+                    const [body, dv] = value.split('-');
+                    const bodyWithoutDots = body.replace(/\./g, ''); // Eliminar puntos
+
+                    // Validar longitud del cuerpo
+                    if (bodyWithoutDots.length < 7 || bodyWithoutDots.length > 8) return 'El RUT no es válido.';
+
+                    // Calcular el dígito verificador
+                    let sum = 0;
+                    let multiplier = 2;
+
+                    // Recorremos el cuerpo del RUT desde el último dígito al primero
+                    for (let i = bodyWithoutDots.length - 1; i >= 0; i--) {
+                        sum += multiplier * parseInt(bodyWithoutDots[i], 10);
+                        multiplier = multiplier === 7 ? 2 : multiplier + 1;
+                    }
+
+                    const remainder = 11 - (sum % 11);
+                    const expectedDv = remainder === 11 ? '0' : remainder === 10 ? 'K' : remainder.toString();
+
+                    // Comparar el dígito verificador ingresado con el calculado
+                    if (dv.toUpperCase() !== expectedDv) return 'El RUT no es válido.';
+
+                    return true; // RUT válido
+                    }
+                ],
+                IMGrules:[null],
+                fechaRules: [
+                    value => {
+                    if (!value) return 'La fecha es requerida.';
+                    // Verifica el formato DD-MM-YYYY
+                    const regex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+                    if (!regex.test(value)) return 'El formato debe ser DD-MM-YYYY.';
+                    
+                    // Validar la fecha real (por ejemplo, no permitir el 31 de febrero)
+                    const [day, month, year] = value.split('-').map(Number);
+                    const date = new Date(year, month - 1, day); // Mes es 0-11 en JS
+                    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+                        return 'La fecha no es válida.';
+                    }
+
+                    return true; // Si pasa todas las validaciones
+                    }
+                ],
+                telefonoRules: [
+                    value => {
+                    // Validar que el valor esté presente
+                    if (!value) return 'El número de teléfono es requerido.';
+                    
+                    // Verificar que solo contenga dígitos y tenga exactamente 9 caracteres
+                    const regex = /^\d{9}$/; // Solo permite 9 dígitos
+                    
+                    if (!regex.test(value)) return 'El número de teléfono debe contener exactamente 9 dígitos.';
+
+                    return true; // Si pasa la validación
+                    }
+                ],
+            };
         },
-        getAvatarUrl(avatar) {
-        // Comprueba si el campo avatar contiene la URL completa o solo el nombre del archivo
-        if (avatar) {
-            if (avatar.startsWith('http')) {
-            return avatar; // Si es una URL completa, la usa directamente
-            } else {
-            return `http://localhost:8000/profile/${avatar}`; // Construye la URL completa si es relativa
+        mounted() {
+           
+            this.obtenerDatosUsuario(); // Llamamos la función al montar el componente
+        },
+        methods: {
+            async obtenerDatosUsuario() {
+            try {
+                const token = localStorage.getItem('access_token'); // Obtenemos el token del local storage
+                const response = await axios.get('http://localhost:8000/api/Usuario/', {
+                headers: {
+                    Authorization: `Token ${token}`, // token a la cabecera
+                },
+                });
+                this.Usuariodata = Array.from(response.data); // Guardamos los datos del usuario
+                console.log(this.Usuariodata)
+                this.nombre = this.Usuariodata[0].nombre;
+                this.apellido = this.Usuariodata[0].apellido;
+                this.grupo = this.Usuariodata[0].grupos.name;
+                localStorage.setItem('Nombre', this.nombre);
+                localStorage.setItem('Apellido', this.apellido);
+                localStorage.setItem('Grupo', this.grupo);
+            } catch (error) {
+                console.error('Error al obtener los datos del usuario:', error);
             }
-        }
-        return ''; // Devuelve una cadena vacía si no hay avatar
+            },
+            getAvatarUrl(avatar) {
+            // Comprueba si el campo avatar contiene la URL completa o solo el nombre del archivo
+            if (avatar) {
+                if (avatar.startsWith('http')) {
+                return avatar; // Si es una URL completa, la usa directamente
+                } else {
+                return `http://localhost:8000/profile/${avatar}`; // Construye la URL completa si es relativa
+                }
+            }
+            return ''; // Devuelve una cadena vacía si no hay avatar
+            },
+            formatFechaNacimiento() {
+                let input = this.Usuariodata.fecha_nacimiento || ''; // Asegura que no sea undefined
+                input = input.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+                if (input.length > 2) {
+                    input = input.slice(0, 2) + '-' + input.slice(2);
+                }
+                if (input.length > 5) {
+                    input = input.slice(0, 5) + '-' + input.slice(5, 9);
+                }
+                this.Usuariodata.fecha_nacimiento = input; 
+            },
+            validateFields() {
+                const fields = {
+                    nombre: this.Usuariodata[0].nombre,
+                    apellido: this.Usuariodata[0].apellido,
+                    rut: this.Usuariodata[0].rut,
+                    telefono: this.Usuariodata[0].telefono,
+                    correo: this.Usuariodata[0].correo
+                };
+
+                let isValid = true; // Variable para saber si todos los campos son válidos
+                let errorMessages = {}; // Objeto para almacenar mensajes de error
+
+                // Validación de cada campo
+                for (const field in fields) {
+                    const value = fields[field];
+                    const rules = this[`${field}Rules`]; // Accede a las reglas dinámicamente
+
+                    // Asegúrate de que las reglas sean un array
+                    if (!Array.isArray(rules)) {
+                        console.error(`Las reglas para ${field} no son un array:`, rules);
+                        continue; // Salir de este bucle si las reglas no son un array
+                    }
+
+                    for (const rule of rules) {
+                        const result = rule(value);
+                        if (result !== true) {
+                            isValid = false;
+                            errorMessages[field] = result; // Guarda el mensaje de error
+                            break; // Sale del bucle al encontrar un error
+                        }
+                    }
+
+                    // Manejo de resultados de validación
+                    if (errorMessages[field]) {
+                        console.log(`Error en ${field}:`, errorMessages[field]);
+                    } else {
+                        console.log(`${field.charAt(0).toUpperCase() + field.slice(1)} es correcto`);
+                    }
+                }
+
+                // Retorna el estado de la validación y los mensajes de error
+                return { isValid, errorMessages };
+            },
+            async guardarDatos() {
+            try {
+                const token = localStorage.getItem('access_token'); // Obtén el token del local storage
+                const usuarioId = this.Usuariodata[0].user;
+                const datosUsuario = {
+                
+                nombre: this.Usuariodata[0].nombre,
+                apellido: this.Usuariodata[0].apellido,
+                correo: this.Usuariodata[0].correo,
+                fecha_nacimiento: this.Usuariodata[0].fecha_nacimiento,
+                telefono: this.Usuariodata[0].telefono,
+                rut: this.Usuariodata[0].rut,
+                avatar: this.Usuariodata[0].avatar || null,
+                
+                };
+                const { isValid, errorMessages } = this.validateFields();
+                console.log(datosUsuario);
+                // Realiza la solicitud POST al backend
+                const response = await axios.put(`http://localhost:8000/api/Usuario/${usuarioId}/`, datosUsuario, {
+                    headers: {
+                        Authorization: `Token ${token}`, // Añade el token en la cabecera
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                console.log('Datos guardados exitosamente:', response.data);
+                alert('Datos guardados exitosamente.');
+            } catch (error) {
+                console.error('Error al guardar los datos:', error);
+                alert('Hubo un error al guardar los datos.');
+                }
+            }
         },
-    },
-    
-};
+        
+    };
 
 </script>
+  
   
 <style scoped>
 .Section-father {
   width: 1000px;
-  height: 600px;
+  min-height: 600px; /* Cambia height por min-height */
   background: #4e4d4d;
   margin: auto;
   margin-top: 5rem;
@@ -109,11 +401,30 @@ export default {
 }
 
 
-.Display-info{
-    display: flex;
-    margin: 2rem;
-    justify-content: space-between;
-    padding: 5px;
+.Display-info {
+  display: flex;
+  margin: 1rem;
+  justify-content: space-between;
+  padding: 3px;
+  align-items: flex-end; /* Cambia esto de flex-end a flex-start */
+}
+
+.personal-info, .Account-info {
+  flex: 1; /* Permite que las secciones se ajusten en proporción */
+  margin-right: 5rem; /* Espacio entre las dos secciones */
+}
+
+.personal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Añade un espacio entre los campos del formulario */
+}
+
+.Account-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos dentro de la cuenta */
+  gap: 1rem; /* Espacio entre los campos de la cuenta */
 }
 
 h2{
@@ -132,8 +443,6 @@ h2{
     justify-content: space-between;
     padding: 5px;
 }
-
-
 </style>
 
 
