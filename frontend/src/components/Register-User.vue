@@ -116,7 +116,7 @@
         <v-card 
         
         style="border: 1px solid #FFCC80;"
-        text="Atención. Al registrar acepta a todas las políticas y condiciones de la empresa. contactar con recursos humanos para conocer de estas o dirigirse a la sección nosotros." 
+        text="Atención. Al registrar acepta a todas las políticas y condiciones de la empresa. contactar con recursos humanos para conocer de estas." 
         class="text-medium-emphasis text-caption " 
         variant="tonal">  
         </v-card >

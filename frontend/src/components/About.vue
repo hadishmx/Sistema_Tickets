@@ -1,64 +1,46 @@
 <template>
-  <div class="Section-father">
-      <div class="Title">
-          <h1>Sobre nosotros</h1>
-      </div>
+  <v-container class="about-section" max-width="800">
+    <v-card class="pa-5" elevation="3">
+      <v-card-title class="headline text-center">
+        Sobre Nosotros
+      </v-card-title>
       
-  </div>
+      <v-divider class="my-4"></v-divider>
+      
+      <v-card-text class="about-text">
+        En nuestra empresa, sabemos que la eficiencia en la gestión y resolución de problemas es clave para el éxito.
+        Nuestro sistema de tickets permite a nuestro equipo responder de manera rápida y efectiva a las solicitudes de nuestros clientes.
+        Con estadísticas detalladas y reportes en tiempo real, monitorizamos y gestionamos cada caso, asegurando una alta tasa de satisfacción y eficiencia.
+      </v-card-text>
+
+      <v-divider class="my-4"></v-divider>
+
+      <router-link to="/Contact"><v-btn variant="text" color="">Trabaja con Nosotros</v-btn></router-link>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
-
 export default {
   name: 'About',
 };
 </script>
 
-
 <style scoped>
-.Section-father {
-width: 1000px;
-height: 600px;
-background: #4e4d4d;
-margin: auto;
-margin-top: 5rem;
-margin-bottom: 5rem;
-box-shadow: 7px 13px 37px #000;
-padding: 20px 30px;
-border-top: 4px solid #017bab;
-color: white;
-border-radius: 5px;
+.about-section {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
 }
-.Title h1{
+
+.v-card-title {
+  color: #017bab;
+}
+
+.about-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #424242;
   text-align: center;
-  text-decoration: underline;
-  
 }
-
-
-.Display-info{
-  display: flex;
-  margin: 2rem;
-  justify-content: space-between;
-  padding: 5px;
-}
-
-h2{
-  padding: 5px;
-  font-size: 15px;
-}
-.Avatar-user{
-  width: 300px;
-  height: 300px;
-  border-radius: 200px
-}
-
-.Account-data{
-  display: flex;
-  margin: 2rem;
-  justify-content: space-between;
-  padding: 5px;
-}
-
-
 </style>
+

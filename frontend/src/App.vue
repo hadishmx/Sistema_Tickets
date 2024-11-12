@@ -12,8 +12,8 @@
             <router-link to="/About"><li><a href="/"><v-btn variant="text" color="">Nosotros</v-btn></a></li></router-link>
           </template>
           <template v-else>
-            <router-link to="/"><li><a href="/"><v-btn variant="text" color="">Inicio</v-btn></a></li></router-link>
-            <router-link to="/AccountsUserList"><li><a href="/"><v-btn variant="text" color="">Cuentas</v-btn></a></li></router-link>
+            <router-link to="/InicioUser"><li><a href="/"><v-btn variant="text" color="">Inicio</v-btn></a></li></router-link>
+            <router-link to="/AccountsUserList" ><li><a href="/"><v-btn variant="text" color="">Cuentas</v-btn></a></li></router-link>
             <router-link to="/ClienteList"><li><a href="/"><v-btn variant="text" color="">Clientes</v-btn></a></li></router-link>
             <router-link to="/TiqueList"><li><a href="/"><v-btn variant="text" color="">Tiques</v-btn></a></li></router-link>
             <router-link to="/Contact"><li><a href="/"><v-btn variant="text" color="">Contacto</v-btn></a></li></router-link>
@@ -23,7 +23,6 @@
         <ul class="sesions-links">
           <template v-if="!isAuthenticated">
             <router-link to="/Login"><li><a href=""><v-btn variant="text" color="primary">Login</v-btn></a></li></router-link>
-            <router-link to="/RegisterUser"><li><a href=""><v-btn variant="text" color="secondary">Register</v-btn></a></li></router-link>
           </template>
           <template v-else>
             <router-link to="/AccountUser"><li><a href=""><v-btn variant="text">Account </v-btn></a></li></router-link>
@@ -38,13 +37,13 @@
     <footer class="footer">
       <p>&copy; 2024 Ticket System. Todos los derechos reservados.</p>
       <ul class="footer-links">
-        <li><a href="/privacy">Política de Privacidad</a></li>
-        <li><a href="/terms">Términos y Condiciones</a></li>
+        <li><a >Política de Privacidad</a></li>
+        <li><a >Términos y Condiciones</a></li>
       </ul>
       <ul class="footer-links">
-        <li><a href="/instagram">Instagram</a></li>
-        <li><a href="/facebook">facebook</a></li>
-        <li><a href="/Twitter">X</a></li>
+        <li><a >Instagram</a></li>
+        <li><a >facebook</a></li>
+        <li><a >X</a></li>
       </ul>
     </footer>
   </div>
@@ -60,6 +59,7 @@ import TiqueList from './components/Tique-List.vue';
 import ClienteList from './components/Cliente-List.vue';
 import AccountsUserList from './components/AccountsUser-List.vue';
 import Contact from './components/Contact.vue';
+import InicioUser from './components/Inicio-User.vue';
 
 
 export default {
@@ -73,6 +73,7 @@ export default {
     TiqueList,
     ClienteList,
     AccountsUserList,
+    InicioUser,
   },
   data() {
     return {

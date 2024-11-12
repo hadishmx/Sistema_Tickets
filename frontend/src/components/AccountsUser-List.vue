@@ -36,11 +36,13 @@
                             <v-card title="Correo:" :text="editedItem.email || 'no existe correo'"></v-card>
                           </v-col> 
                           <v-col cols="12" md="6">
-                            <v-checkbox v-model="editedItem.is_active" label="Activar Cuenta"></v-checkbox>
+                            <v-checkbox 
+                             
+                            v-model="editedItem.is_active" label="Activar Cuenta"></v-checkbox>
                           </v-col>
                           <v-col cols="12" md="6">
                             <v-select
-                            
+                             
                             v-model="editedItem.grupos[0].name"
                             :items="items"
                             item-text="name"
@@ -133,7 +135,7 @@ export default {
     },
     items: [
       'Ejecutivo',
-      'Atención',
+      'Atencion',
       ],
   }),
 

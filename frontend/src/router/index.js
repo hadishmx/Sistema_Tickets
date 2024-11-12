@@ -7,12 +7,25 @@ import ClienteList from '../components/Cliente-List.vue';
 import AccountsUserList from '../components/AccountsUser-List.vue';
 import About from '../components/About.vue';
 import Contact from '../components/Contact.vue';
+import InicioUser from '../components/Inicio-User.vue';
 
 const routes = [ //define las ruta de los componente
     {path: '/About',component:About, name:'About'},
     {path: '/Login',component:LoginUser, name:'Login'}, 
     {path: '/RegisterUser',component:RegisterUser, name:'RegisterUser'},
     {path: '/AccountUser',component:AccountUser, name:'AccountUser'},
+    {path: '/InicioUser',component:InicioUser, name:'InicioUser',
+      meta:{role: 'Director General'},
+      beforeEnter: (to, from, next) => {
+        const userRole = localStorage.getItem('Grupo');
+        if (userRole === 'Director General' || userRole === 'Ejecutivo' || userRole === 'Atencion') {
+          next();
+        } else {
+          next('/AccountUser');
+          alert('No tienes Acceso esta Pagina')
+        }
+      }
+    },
     {path: '/TiqueList',component:TiqueList, name:'TiqueList',
       meta:{role: 'Atencion'},
       beforeEnter: (to, from, next) => {

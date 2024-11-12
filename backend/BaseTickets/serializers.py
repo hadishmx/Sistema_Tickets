@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from .models import Cliente,Tique,EstadoTique,TipoTique,Criticidad,Usuario,AreaTique
+from .models import Cliente,Tique,EstadoTique,TipoTique,Criticidad,Usuario,Area
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -97,6 +97,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 class TiqueSerializers(serializers.ModelSerializer):
+
+    rut_cliente = serializers.CharField(source='cliente.rut', read_only=True)
     class Meta:
         model = Tique
         fields = '__all__'  # O especifica los campos que necesites
@@ -125,5 +127,5 @@ class CriticidadSerializers(serializers.ModelSerializer):
 
 class AreaSerializers(serializers.ModelSerializer):
     class Meta:
-        model = AreaTique
+        model = Area
         fields = '__all__'

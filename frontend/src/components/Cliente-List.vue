@@ -1,7 +1,7 @@
 <template class="Father-template">
     <v-container fluid class="d-flex justify-center align-center fill-height ">
       <v-row justify="center">
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="5">
           <div class="Section-father">
             
               
@@ -308,6 +308,14 @@
     
     methods: {
 
+      getTodayDate() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes comienza en 0
+        const year = today.getFullYear();
+        return `${day}-${month}-${year}`;
+      },
+
       validateFields() {
         const fields = {
             nombre: this.editedItem.nombre,
@@ -491,7 +499,8 @@
                     fecha_nacimiento: this.editedItem.fecha_nacimiento,
                     telefono: this.editedItem.telefono,
                     correo: this.editedItem.correo,
-                    avatar: this.editedItem.avatar || null
+                    avatar: this.editedItem.avatar || null ,
+                    fecha_creacion: this.getTodayDate()
                 }, {
                     headers: {
                         Authorization: `Token ${token}`

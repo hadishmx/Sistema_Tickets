@@ -1,7 +1,7 @@
-from .models import Tique,Usuario,Cliente,User
+from .models import Tique,Usuario,Cliente,User,Area
 from django.contrib.auth.models import Group
 from rest_framework import viewsets,permissions
-from .serializers import TiqueSerializers,UsuarioSerializer,ClienteSerializers,UserSerializer
+from .serializers import TiqueSerializers,UsuarioSerializer,ClienteSerializers,UserSerializer,AreaSerializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
 from rest_framework.response import Response
@@ -26,6 +26,10 @@ class ClienteViewSet(viewsets.ModelViewSet):
             # Gerente General tiene acceso total
             return super().list(request, *args, **kwargs)
         
+        elif request.user.groups.filter(name="Atencion").exists():
+            # Gerente General tiene acceso total
+            return super().list(request, *args, **kwargs)
+        
         else:
             # Si no pertenece a ningún grupo, denegar el acceso
             return Response({"detail": "No tiene permisos para acceder a esta información."}, status=403)
@@ -40,7 +44,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         # Solo Atención y Gerente General pueden editar tiques
-        if request.user.groups.filter(name="Ejecutivo").exists() or request.user.groups.filter(name="Director General").exists():
+        if request.user.groups.filter(name="Ejecutivo").exists() or request.user.groups.filter(name="Director General").exists() or request.user.groups.filter(name="Atencion").exists():
             return super().update(request, *args, **kwargs)
         else:
             return Response({"detail": "No tiene permisos para editar clientes."}, status=403)
@@ -80,7 +84,7 @@ class TiqueViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         # Solo Atención y Gerente General pueden editar tiques
-        if request.user.groups.filter(name="Atencion").exists() or request.user.groups.filter(name="Director General").exists():
+        if request.user.groups.filter(name="Atencion").exists() or request.user.groups.filter(name="Director General").exists() or request.user.groups.filter(name="Ejecutivo").exists() :
             return super().update(request, *args, **kwargs)
         else:
             return Response({"detail": "No tiene permisos para editar tiques."}, status=403)
@@ -149,6 +153,8 @@ class UserViewSet(viewsets.ModelViewSet):
         
         # Para los demás, devolver solo su propia cuenta
         return User.objects.filter(id=self.request.user.id)
+    
+
 
 
 

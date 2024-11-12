@@ -3,7 +3,6 @@ from rest_framework import permissions
 from django.contrib.auth.models import Group
 
 class IsGerenteGeneralOrReadOnly(permissions.BasePermission):
-
     def has_permission(self, request, view):
         # Permitir métodos seguros (GET, HEAD, OPTIONS) para todos los usuarios autenticados
         if request.method in permissions.SAFE_METHODS:
@@ -29,24 +28,22 @@ class IsGerenteGeneralOrReadOnly(permissions.BasePermission):
 
 class IsEjecutivo(permissions.BasePermission):
     def has_permission(self, request, view):
-        
         if request.method in permissions.SAFE_METHODS:
             return True
         
         ejecutivo_group = Group.objects.get(name="Ejecutivo")
-        if ejecutivo_group in request.user.group.all():
+        if ejecutivo_group in request.user.groups.all():
             return True
         
         return False
     
 class IsAtencion(permissions.BasePermission):
     def has_permission(self, request, view):
-        
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        Atencion_group = Group.objects.get(name="Atencion")
-        if Atencion_group in request.user.group.all():
+        atencion_group = Group.objects.get(name="Atencion")
+        if atencion_group in request.user.groups.all():
             return True
         
         return False

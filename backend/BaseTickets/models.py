@@ -36,6 +36,7 @@ class Cliente(models.Model):
     telefono = models.CharField(verbose_name="Teléfono Cliente", max_length=9)
     correo = models.EmailField(verbose_name="Correo Electrónico Cliente")
     avatar = models.ImageField(verbose_name="Avatar Cliente", upload_to="profile", null=True, blank=True)
+    fecha_creacion = models.DateField(verbose_name="Fecha registro cliente",null=True, blank=True)
 
     def __str__(self) -> str:
         return self.nombre + " " + self.apellido
@@ -52,11 +53,12 @@ class TipoTique(models.Model):
     def __str__(self) -> str:
         return self.nombre
     
-class AreaTique(models.Model):
+class Area(models.Model):
     nombre = models.CharField(primary_key=True, max_length=50, verbose_name="Nombre Area")
     
     def __str__(self) -> str:
         return self.nombre
+        
 
 class Tique(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID Tique")
@@ -65,7 +67,7 @@ class Tique(models.Model):
     servicio = models.TextField(verbose_name="Detalle Servicio")
     observacion = models.TextField(verbose_name="Observación", null=True, blank=True)
     cliente = models.ForeignKey(Cliente, verbose_name="Rut Cliente", on_delete=models.CASCADE)
-    area = models.ForeignKey(AreaTique, verbose_name="Área",on_delete=models.CASCADE)
+    area = models.ForeignKey(Area, verbose_name="Área",on_delete=models.CASCADE)
     tipo = models.ForeignKey(TipoTique, verbose_name="Tipo", on_delete=models.CASCADE)
     estado = models.ForeignKey(EstadoTique, verbose_name="Estado", on_delete=models.CASCADE, null=True, blank=True)
     criticidad = models.ForeignKey(Criticidad, verbose_name="Estado", on_delete=models.CASCADE)

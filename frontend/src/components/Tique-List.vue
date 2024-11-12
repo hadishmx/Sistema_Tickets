@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="d-flex justify-center align-center fill-height">
       <v-row justify="center">
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="6">
           <div class="Section-father">
             
               
@@ -51,7 +51,7 @@
                               <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
                               <v-textarea label="Servicio" v-model="editedItem.servicio" :rules="servicioRules"></v-textarea>
                               </v-col>
-                              <v-col cols="12" md="6"  v-if="userRole === 'Atencion' || userRole === 'Director General'">
+                              <v-col cols="12" md="6"  v-if="userRole === 'Atencion' || userRole === 'Director General' || userRole === 'Ejecutivo'">
                               <v-textarea label="Obsevacion" v-model="editedItem.observacion" :rules="observacionRules"></v-textarea>
                               </v-col>
                               <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
@@ -76,7 +76,7 @@
                                 required
                               ></v-select>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Atencion' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Atencion' || userRole === 'Director General' || userRole === 'Ejecutivo'">
                               <v-select
                                 
                                 v-model="editedItem.estado"
@@ -218,7 +218,7 @@
         
       },
       itemsArea: [
-      'Precencial',
+      'Presencial',
       'Virtual',
       ],
       itemsTipo: [
