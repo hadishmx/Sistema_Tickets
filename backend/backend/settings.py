@@ -177,8 +177,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'bravohadish@gmail.com'  # Reemplaza con tu correo
-EMAIL_HOST_PASSWORD = 'lszjfvkswbmzwztj'    # Reemplaza con tu contraseña o usa una app password
+EMAIL_HOST_USER = '???'  # Reemplaza con tu correo
+EMAIL_HOST_PASSWORD = '???'    # Reemplaza con tu contraseña o usa una app password
 
 TRANSBANK_ENV = "TEST"  # Cambia a "PROD" para producción
 
