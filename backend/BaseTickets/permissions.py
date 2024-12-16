@@ -9,7 +9,7 @@ class IsGerenteGeneralOrReadOnly(permissions.BasePermission):
             return True
         
         # Verificar si el usuario pertenece al grupo 'Gerente General'
-        gerente_general_group = Group.objects.get(name="Director General")
+        gerente_general_group = Group.objects.get(name="Gerente General")
         if gerente_general_group in request.user.groups.all():
             return True
         
@@ -22,7 +22,7 @@ class IsGerenteGeneralOrReadOnly(permissions.BasePermission):
             return obj == request.user
         
         # Permitir cambios solo si el usuario está en 'Gerente General'
-        gerente_general_group = Group.objects.get(name="Director General")
+        gerente_general_group = Group.objects.get(name="Gerente General")
         return gerente_general_group in request.user.groups.all()
     
 
@@ -31,7 +31,7 @@ class IsEjecutivo(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        ejecutivo_group = Group.objects.get(name="Ejecutivo")
+        ejecutivo_group = Group.objects.get(name="Ejecutivo Cliente")
         if ejecutivo_group in request.user.groups.all():
             return True
         
@@ -42,7 +42,7 @@ class IsAtencion(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        atencion_group = Group.objects.get(name="Atencion")
+        atencion_group = Group.objects.get(name="Ejecutivo Tecnico")
         if atencion_group in request.user.groups.all():
             return True
         

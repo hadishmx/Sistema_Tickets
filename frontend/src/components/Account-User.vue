@@ -38,11 +38,14 @@
                     label="Rut"
                     required
                     variant="underlined"
+                    @input="formatRut"
+                    maxlength="10"
                 ></v-text-field>
                 <v-text-field
                     v-model="Usuariodata.telefono"
                     :rules="telefonoRules"
-                    :counter="10"
+                    :counter="9"
+                    maxlength="9"
                     label="Telefono"
                     required
                     variant="underlined"
@@ -53,17 +56,19 @@
                     placeholder="DD-MM-YYYY"
                     maxlength="10"
                     :rules="fechaRules"
-                    @input="formatFechaNacimiento"
+                    @input="formatDate"
                     variant="underlined"
+                    :counter="10"
                 >
                 </v-text-field>
                 <v-file-input
                     :rules="IMGrules"
-                    accept="image/png, image/jpeg, image/bmp"
+                    accept="image/png, image/jpeg"
                     label="Subir perfil"
                     placeholder="Elige Tu Imagen"
                     prepend-icon="mdi-camera"
                     variant="underlined"
+                    @change="onFileChange"
                 ></v-file-input>
                 
             </section>
@@ -134,10 +139,11 @@
                 Apellido:"",
                 Correo:"",
                 fecha_nacimiento:"",
-                Rut:"",
-                avatar:"",
+                rut:"",
+                avatar:null,
                 Id:null,
                 Grupo:null,
+                selectedFile: null,
                 nombreRules: [
                     value => {
                     // Validar que no contenga símbolos ni números, y que sea máximo de 50 caracteres
@@ -269,11 +275,15 @@
                 this.nombre = this.Usuariodata[0].nombre;
                 this.apellido = this.Usuariodata[0].apellido;
                 this.grupo = this.Usuariodata[0].grupos.name;
-                localStorage.setItem('Nombre', this.nombre);
-                localStorage.setItem('Apellido', this.apellido);
-                localStorage.setItem('Grupo', this.grupo);
+                
             } catch (error) {
                 console.error('Error al obtener los datos del usuario:', error);
+            }
+            },
+            onFileChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.selectedFile = file; // Guarda el archivo seleccionado
             }
             },
             getAvatarUrl(avatar) {
@@ -287,17 +297,44 @@
             }
             return ''; // Devuelve una cadena vacía si no hay avatar
             },
-            formatFechaNacimiento() {
-                let input = this.Usuariodata.fecha_nacimiento || ''; // Asegura que no sea undefined
-                input = input.replace(/\D/g, ''); // Eliminar caracteres no numéricos
-                if (input.length > 2) {
-                    input = input.slice(0, 2) + '-' + input.slice(2);
+            formatDate() {
+				if (!this.fecha_nacimiento) {
+					this.fecha_nacimiento = "";
+				}
+
+				// Solo permitimos números y eliminamos otros caracteres
+				let date = this.fecha_nacimiento.replace(/\D/g, "");
+
+				// Formateamos la fecha agregando los guiones
+				if (date.length > 4) {
+					date = date.slice(0, 2) + "-" + date.slice(2, 4) + "-" + date.slice(4, 8);
+				} else if (date.length > 2) {
+					date = date.slice(0, 2) + "-" + date.slice(2);
+				}
+
+				// Limitar la longitud a 10 caracteres (DD-MM-YYYY)
+				this.fecha_nacimiento = date.slice(0, 10);
+		    },
+            formatRut() {
+                if (!this.rut) {
+                this.rut = "";
                 }
-                if (input.length > 5) {
-                    input = input.slice(0, 5) + '-' + input.slice(5, 9);
+
+                // Eliminamos cualquier carácter no permitido (números y 'K'/'k')
+                let rut = this.rut.replace(/[^0-9kK]/g, "");
+
+                // Formateamos el RUT: mantenemos la parte numérica y el dígito verificador separado por un guion
+                let body = rut.slice(0, -1); // Todo menos el último carácter
+                let dv = rut.slice(-1).toUpperCase(); // Último carácter (el dígito verificador)
+
+                // Solo agregamos el guion si hay algo en el cuerpo del RUT
+                if (body) {
+                this.rut = `${body}-${dv}`;
+                } else {
+                this.rut = dv;
                 }
-                this.Usuariodata.fecha_nacimiento = input; 
             },
+            
             validateFields() {
                 const fields = {
                     nombre: this.Usuariodata[0].nombre,
@@ -341,38 +378,48 @@
                 // Retorna el estado de la validación y los mensajes de error
                 return { isValid, errorMessages };
             },
+
             async guardarDatos() {
-            try {
                 const token = localStorage.getItem('access_token'); // Obtén el token del local storage
                 const usuarioId = this.Usuariodata[0].user;
-                const datosUsuario = {
-                
-                nombre: this.Usuariodata[0].nombre,
-                apellido: this.Usuariodata[0].apellido,
-                correo: this.Usuariodata[0].correo,
-                fecha_nacimiento: this.Usuariodata[0].fecha_nacimiento,
-                telefono: this.Usuariodata[0].telefono,
-                rut: this.Usuariodata[0].rut,
-                avatar: this.Usuariodata[0].avatar || null,
-                
-                };
-                const { isValid, errorMessages } = this.validateFields();
-                console.log(datosUsuario);
-                // Realiza la solicitud POST al backend
-                const response = await axios.put(`http://localhost:8000/api/Usuario/${usuarioId}/`, datosUsuario, {
-                    headers: {
-                        Authorization: `Token ${token}`, // Añade el token en la cabecera
-                        'Content-Type': 'application/json',
-                    },
-                });
 
-                console.log('Datos guardados exitosamente:', response.data);
-                alert('Datos guardados exitosamente.');
-            } catch (error) {
-                console.error('Error al guardar los datos:', error);
-                alert('Hubo un error al guardar los datos.');
+                // Crear un objeto FormData
+                const formData = new FormData();
+                formData.append('nombre', this.Usuariodata[0].nombre);
+                formData.append('apellido', this.Usuariodata[0].apellido);
+                formData.append('correo', this.Usuariodata[0].correo);
+                formData.append('fecha_nacimiento', this.Usuariodata[0].fecha_nacimiento);
+                formData.append('telefono', this.Usuariodata[0].telefono);
+                formData.append('rut', this.Usuariodata[0].rut);
+
+                // Solo agrega el archivo si se seleccionó uno
+                if (this.selectedFile) {
+                    formData.append('avatar', this.selectedFile); // Archivo seleccionado
+                }
+
+                const { isValid, errorMessages } = this.validateFields();
+                if (isValid) {
+                    try {
+                        // Realiza la solicitud PUT al backend
+                        const response = await axios.put(`http://localhost:8000/api/Usuario/${usuarioId}/`, formData, {
+                            headers: {
+                                Authorization: `Token ${token}`, // Añade el token en la cabecera
+                                'Content-Type': 'multipart/form-data', // Importante para manejar archivos
+                            },
+                        });
+
+                        console.log('Datos guardados exitosamente:', response.data);
+                        alert('Datos guardados exitosamente.');
+                    } catch (error) {
+                        console.error('Error al guardar los datos:', error);
+                        alert('Hubo un error al guardar los datos.');
+                    }
+                } else {
+                    console.log(errorMessages);
+                    alert('Error: debe completar los campos requeridos');
                 }
             }
+
         },
         
     };

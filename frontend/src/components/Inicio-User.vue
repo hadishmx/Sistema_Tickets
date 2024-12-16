@@ -1,7 +1,7 @@
 <template>
   <v-container class="d-flex justify-center align-center" fluid>
     <v-row class="d-flex justify-center align-center">
-      <v-col cols="12" sm="6" md="4" v-if="userRole === 'Ejecutivo' || userRole === 'Director General' || userRole === 'Atencion'">
+      <v-col cols="12" sm="6" md="4" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General' || userRole === 'Ejecutivo Tecnico'">
         <v-card class="pa-4" outlined>
           <v-card-title class="text-center">
             <h2>Gráfico de Tiques</h2>
@@ -13,7 +13,7 @@
       </v-col>
 
       <!-- Gráfico de líneas -->
-      <v-col cols="12" sm="6" md="4" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+      <v-col cols="12" sm="6" md="4" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
         <v-card class="pa-4" outlined>
           <v-card-title class="text-center">
             <h2>Ingreso de Clientes</h2>
@@ -21,6 +21,17 @@
           <v-card-text class="d-flex justify-center align-center">
             <!-- Cambio aquí: ScatterChart a LineChart -->
             <LineChart v-if="Clientesdata" :data="lineChartData" :options="lineChartOptions" height="250px" width="250px"/>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
+        <v-card class="pa-4" outlined>
+          <v-card-title class="text-center">
+            <h2>Ventas Mensuales</h2>
+          </v-card-title>
+          <v-card-text class="d-flex justify-center align-center">
+            <!-- Cambio aquí: ScatterChart a LineChart -->
+            <GraficoVentas api-endpoint="http://127.0.0.1:8000/api/Tiques/" height="250px" width="250px"/>
           </v-card-text>
         </v-card>
       </v-col>
@@ -33,6 +44,9 @@ import { Doughnut, Line } from "vue-chartjs";  // Cambié Scatter a Line
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, TimeScale } from "chart.js"; 
 import axios from "axios";
 import 'chartjs-adapter-date-fns';
+import GraficoVentas from "./GraficoVentas.vue";
+
+
 
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, TimeScale); // Agregué LineElement para gráfico de líneas
@@ -41,7 +55,8 @@ export default {
   name: "TiqueChart",
   components: {
     DoughnutChart: Doughnut,
-    LineChart: Line, 
+    LineChart: Line,
+    GraficoVentas
   },
   data() {
     return {
@@ -149,15 +164,15 @@ export default {
 
     processChartData() {
       const estadoCounts = {
-        "Abierto": 0,
-        "Espera": 0,
-        "Cerrado": 0,
+        "A Resolucion": 0,
+        "No Aplicable": 0,
+        "Resuelto": 0,
       };
 
       this.Tiquesdata.forEach(tique => {
-        if (tique.estado === "Abierto") estadoCounts["Abierto"]++;
-        if (tique.estado === "Espera") estadoCounts["Espera"]++;
-        if (tique.estado === "Cerrado") estadoCounts["Cerrado"]++;
+        if (tique.estado === "A Resolucion") estadoCounts["A Resolucion"]++;
+        if (tique.estado === "No Aplicable") estadoCounts["No Aplicable"]++;
+        if (tique.estado === "Resuelto") estadoCounts["Resuelto"]++;
       });
 
       this.chartData.labels = Object.keys(estadoCounts);

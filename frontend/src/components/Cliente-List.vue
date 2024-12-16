@@ -35,7 +35,7 @@
                           <v-container>
                             <v-row>
                               <v-col cols="12" md="6">
-                                <v-text-field v-model="editedItem.rut" label="Rut" placeholder="12345678-9" @input="formatRut" :counter="10" :rules="rutRules"></v-text-field>
+                                <v-text-field v-model="editedItem.rut" label="Rut" :rules="rutRules" :counter="10" @input="formatRut"></v-text-field>
                               </v-col>
                               <v-col cols="12" md="6">
                                 <v-text-field v-model="editedItem.nombre" label="Nombre" :rules="nombreRules" :counter="50"></v-text-field>
@@ -115,8 +115,6 @@
   
                 <template v-slot:item.actions="{ item }">
                   <v-btn icon="mdi-pencil" class="me-2" size="small" color="warning" @click="editItem(item)">
-                  </v-btn>
-                  <v-btn icon="mdi-delete" class="me-2" size="small" color="error" @click="deleteItem(item)">
                   </v-btn>
                 </template>
               </v-data-table>
@@ -509,6 +507,7 @@
                 .then(response => {
                   console.log('Datos enviados correctamente:', response.data);
                   this.ClienteData.push(response.data); // Agregar el nuevo cliente a la lista
+                  this.ObtenerClientes();
                   this.dialog = false; // Cierra el diálogo
                 })
                 .catch(error => {

@@ -9,8 +9,8 @@
             :headers="headers"
             :items="Cuentadata"
             :search="search"
-            item-key="username"
-            :sort-by="[{ key: 'username', order: 'asc' }]"
+            item-key="user.username"
+            :sort-by="[{ key: 'user.username', order: 'asc' }]"
           >
             <template v-slot:top>
               <v-toolbar flat>
@@ -30,20 +30,20 @@
                       <v-container >
                         <v-row>
                           <v-col cols="12" md="6">
-                            <v-card title="Usuario:" :text="editedItem.username || 'no existe usuario'"></v-card>
+                            <v-card title="Usuario:" :text="editedItem.user.username || 'no existe usuario'"></v-card>
                           </v-col>
                           <v-col cols="12" md="6">
-                            <v-card title="Correo:" :text="editedItem.email || 'no existe correo'"></v-card>
+                            <v-card title="Correo:" :text="editedItem.user.email || 'no existe correo'"></v-card>
                           </v-col> 
                           <v-col cols="12" md="6">
                             <v-checkbox 
                              
-                            v-model="editedItem.is_active" label="Activar Cuenta"></v-checkbox>
+                            v-model="editedItem.user.is_active" label="Activar Cuenta"></v-checkbox>
                           </v-col>
                           <v-col cols="12" md="6">
                             <v-select
                              
-                            v-model="editedItem.grupos[0].name"
+                            v-model="editedItem.user.grupos[0].name"
                             :items="items"
                             item-text="name"
                             :rules="[v => !!v || 'Este item es requerido']"
@@ -91,8 +91,7 @@
             <template v-slot:item.actions="{ item }">
               <v-btn icon="mdi-pencil" class="me-2" size="small" color="warning" @click="editItem(item)"  >
               </v-btn>
-              <v-btn icon="mdi-delete" class="me-2" size="small"  @click="deleteItem(item)"  color="error">
-              </v-btn>
+              
             </template>
           </v-data-table>
         </div>
@@ -111,10 +110,10 @@ export default {
     dialog: false,
     dialogDelete: false,
     headers: [
-      { title: 'Cuenta', align: 'start', key: 'username' },
-      { title: 'Correo', key: 'email' },
-      { title: 'Estado', key: 'is_active' },
-      { title: 'ID Cuenta', key: 'id' },
+      { title: 'Cuenta', align: 'start', key: 'user.username' },
+      { title: 'Correo', key: 'user.email' },
+      { title: 'Estado', key: 'user.is_active' },
+      { title: 'ID Cuenta', key: 'user.id' },
       { title: 'Actions', key: 'actions', sortable: false },
     ],
     Cuentadata: [],  // Datos obtenidos desde la API
@@ -134,8 +133,8 @@ export default {
   
     },
     items: [
-      'Ejecutivo',
-      'Atencion',
+      'Ejecutivo Cliente',
+      'Ejecutivo Tecnico',
       ],
   }),
 
@@ -165,7 +164,7 @@ export default {
     async ObtenerCuentas() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:8000/api/Cuenta/', {
+        const response = await axios.get('http://localhost:8000/usuarios/', {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -215,9 +214,9 @@ export default {
       if (this.editedIndex > -1) {
         Object.assign(this.Cuentadata[this.editedIndex], this.editedItem);
 
-        const userId = this.editedItem.id;
-        const is_active = this.editedItem.is_active;
-        const grupo = this.editedItem.grupos[0].name;
+        const userId = this.editedItem.user.id;
+        const is_active = this.editedItem.user.is_active;
+        const grupo = this.editedItem.user.grupos[0].name;
         console.log('ID:', userId);
         console.log('Estado activo:', is_active);
         console.log('Grupo:', grupo);

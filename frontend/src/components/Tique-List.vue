@@ -21,7 +21,7 @@
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="1000px">
                       <template v-slot:activator="{ props } ">
-                        <v-btn class="mb-2" color="primary" dark v-bind="props" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                        <v-btn class="mb-2" color="primary" dark v-bind="props" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                           Nuevo Tique
                         </v-btn>
                       </template>
@@ -34,10 +34,10 @@
                         <v-card-text fluid class="d-flex justify-center align-center fill-height">
                           <v-container>
                             <v-row>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                                 <v-text-field v-model="editedItem.problema" label="Problema" :rules="problemaRules"></v-text-field>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                                 <v-autocomplete
                                   label="RUT del cliente"
                                   v-model="editedItem.cliente"  
@@ -48,54 +48,59 @@
                                   @input="formatRut"
                                 ></v-autocomplete>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                               <v-textarea label="Servicio" v-model="editedItem.servicio" :rules="servicioRules"></v-textarea>
                               </v-col>
-                              <v-col cols="12" md="6"  v-if="userRole === 'Atencion' || userRole === 'Director General' || userRole === 'Ejecutivo'">
+                              <v-col cols="12" md="6"  v-if="userRole === 'Ejecutivo Tecnico' || userRole === 'Gerente General' || userRole === 'Ejecutivo Cliente'">
                               <v-textarea label="Obsevacion" v-model="editedItem.observacion" :rules="observacionRules"></v-textarea>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                               <v-select
                                 
                                 v-model="editedItem.area"
                                 :items="itemsArea"
                                 item-text="name"
-                                :rules="areaRules"
-                                label="Area atencion"
-                                required
-                              ></v-select>
-                              </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
-                              <v-select
                                 
-                                v-model="editedItem.tipo"
-                                :items="itemsTipo"
-                                item-text="name"
-                                :rules="tipoRules"
-                                label="Tipo"
+                                :rules="areaRules"
+                                label="Area"
                                 required
                               ></v-select>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Atencion' || userRole === 'Director General' || userRole === 'Ejecutivo'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
+                                <v-select
+                                  v-model="editedItem.tipo"  
+                                  :items="itemsTipo"  
+                                  :rules="tipoRules"
+                                  label="Tipo"
+                                  required
+                                ></v-select>
+                              </v-col>
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Tecnico' || userRole === 'Gerente General' || userRole === 'Ejecutivo Cliente'">
                               <v-select
                                 
                                 v-model="editedItem.estado"
                                 :items="itemsEstado"
                                 item-text="name"
+                                
                                 :rules="estadoRules"
                                 label="Estado del Tique"
                               ></v-select>
                               </v-col>
-                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo' || userRole === 'Director General'">
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
                               <v-select
                                 
                                 v-model="editedItem.criticidad"
                                 :items="itemsCriticidad"
                                 item-text="name"
+                                
                                 :rules="criticidadRules"
                                 label="Criticidad"
                               ></v-select>
                               </v-col>
+                              <v-col cols="12" md="6" v-if="userRole === 'Ejecutivo Cliente' || userRole === 'Gerente General'">
+                              <v-text-field label="Costo" v-model="editedItem.costo" :rules="costoRules" type="number" controlVariant="default"></v-text-field>
+                              </v-col>
+                              <v-col cols="12" md="6"></v-col>
                               <v-col cols="12" md="6">
                                 <v-card title="Creado Por:" :text="editedItem.name_crea || 'no existe de momento'" style="border: 1px solid #017bab;"></v-card>
                               </v-col>
@@ -154,8 +159,7 @@
                 <template v-slot:item.actions="{ item }">
                   <v-btn icon="mdi-pencil" class="me-2" size="small" color="warning" @click="editItem(item)">
                   </v-btn>
-                  <v-btn icon="mdi-delete" class="me-2" size="small" color="error" @click="deleteItem(item)">
-                  </v-btn>
+                  
                 </template>
               </v-data-table>
           </div>
@@ -166,6 +170,7 @@
   
   <script>
   import axios from 'axios';
+import TipoTiques from './Tipo-Tiques.vue';
   
   export default {
     name:"ClientesList",
@@ -177,28 +182,32 @@
       loading: false,  // Estado de carga
       userRole: localStorage.getItem('Grupo'),
       headers: [
+        { title: 'Id', align: 'start', key: 'id' },
         { title: 'Cliente', align: 'start', key: 'cliente' },
         { title: 'Problema', key: 'problema' },
         { title: 'Servicio', key: 'servicio' },
-        { title: 'Criticidad', key: 'criticidad' },
+        { title: 'Criticidad', key: 'criticidad'},
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       TiquesData: [],  // Datos obtenidos desde la API
+      itemsTipo: [],
       editedIndex: -1,
       editedItem: {
+        
         cliente: '',
         problema: '',
         servicio: '',
-        criticidad: '',
+        criticidad: null,
         observacion:'',
-        area:'',
-        tipo:'',
-        estado:'Abierto',
-        criticidad:'',
+        area:null,
+        tipo:null,
+        estado:'A Resolucion',
+        
         fecha_creacion:'',
         fecha_cierre:'',
         usuario_crea:'',
         usuario_cierra:'',
+        costo:'',
         
       },
       defaultItem: {
@@ -209,34 +218,31 @@
         observacion:'',
         area:'',
         tipo:'',
-        estado:'Abierto',
-        criticidad:'',
+        estado:'A Resolucion',
         fecha_creacion:'',
         fecha_cierre:'',
         usuario_crea:'',
         usuario_cierra:'',
+        costo:'',
         
       },
       itemsArea: [
-      'Presencial',
-      'Virtual',
+      'Presencial' ,
+      'Virtual'
       ],
-      itemsTipo: [
-      'Consulta',
-      'Reclamo',
-      'Sugerencia',
-      ],
+      
       itemsEstado: [
-      'Abierto',
-      'Espera',
-      'Cerrado',
+      'A Resolucion' ,
+      'Resuelto' ,
+      'No Aplicable'
+      
       ],
       itemsCriticidad: [
-      'Muy Baja',
-      'Baja',
-      'Media',
-      'Alta',
-      'Muy Alta',
+      'Muy Baja' ,
+      'Baja' ,
+      'Media' ,
+      'Alta' ,
+      'Muy Alta' 
       ],
       problemaRules: [
         value => {
@@ -255,6 +261,14 @@
         }
       ],
       servicioRules: [
+        value =>  {
+
+          if  (!value) return 'debe existir contenido.';
+
+          return true; 
+        } 
+      ],
+      costoRules: [
         value =>  {
 
           if  (!value) return 'debe existir contenido.';
@@ -318,15 +332,19 @@
       dialogDelete(val) {
         val || this.closeDelete();
       },
+      updateTipo(value) {
+        console.log("Nuevo tipo seleccionado:", value);  // Debería mostrar el id del tipo
+        this.editedItem.tipo = value;
+      },
     },
   
     created() {
       this.ObtenerTiques();
       this.fetchClientRUTs();
+      this.fetchTipoTique();
     },
   
     methods: {
-
       getTodayDate() {
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
@@ -368,10 +386,31 @@
           this.loading = false;  // Desactivar el indicador de carga
         }
       },
+      async fetchTipoTique() {
+        this.loading = true;  // Activar el indicador de carga
+        try {
+          const token = localStorage.getItem('access_token'); // Obtener el token
+          const response = await axios.get('http://localhost:8000/api/TipoTique/', {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          });
+          this.itemsTipo = response.data.map(TipoTiques => (
+            TipoTiques.nombre
+          ));
+          console.log(this.itemsTipo);
+        } catch (error) {
+          console.error('Error al obtener los tipos de tiques:', error);
+        } finally {
+          this.loading = false;  // Desactivar el indicador de carga
+        }
+      },
       editItem(item) {
         this.editedIndex = this.TiquesData.indexOf(item);
         this.editedItem = Object.assign({}, item);
         this.dialog = true;
+        this.ObtenerTiques();
+        console.log("ID del tique:", this.editedItem.id);
       },
   
       deleteItem(item) {
@@ -474,6 +513,7 @@
             tipo: this.editedItem.tipo,
             estado: this.editedItem.estado,
             criticidad: this.editedItem.criticidad,
+            costo: this.editedItem.costo,
         };
 
         let isValid = true; // Variable para saber si todos los campos son válidos
@@ -521,11 +561,10 @@
           const extracId = localStorage.getItem('ID_Account');
           const nombreCompleto = `${extracName} ${extractApellido}`;
           const Tiqueid = this.editedItem.id;
-          const fecha_cierre= this.getTodayDate()
           console.log(Tiqueid);
           if (existingRuts.includes(this.editedItem.cliente)) {
             console.log('El RUT existe, Subiendo datos...');
-            console.log(this.editItem);
+            console.log(this.editedItem);
             const { isValid, errorMessages } = this.validateFieldsEdited();
             if (isValid) {
               const url = `http://127.0.0.1:8000/api/Tiques/${Tiqueid}/`;
@@ -540,9 +579,10 @@
                 tipo: this.editedItem.tipo,
                 estado: this.editedItem.estado,
                 criticidad: this.editedItem.criticidad,
+                costo:this.editedItem.costo,
                 usuario_cierra: extracId,
                 name_cierre: nombreCompleto,
-                fecha_cierre: fecha_cierre
+                fecha_cierre: this.getTodayDate()
               }, {
                 headers: {
                   Authorization: `Token ${token}`
@@ -550,6 +590,7 @@
               })
               .then(response => {
                 console.log('Datos enviados correctamente:', response.data);
+                this.TiquesData[this.editedIndex] = response.data;
                 this.dialog = false; // Cierra el diálogo
               })
               .catch(error => {
@@ -567,16 +608,19 @@
           }
         } else {
 
-          
+          console.log(this.editedItem.tipo.nombre);
           const existingRuts = this.clientRUTs;
           const extracName = localStorage.getItem('Nombre');
           const extractApellido = localStorage.getItem('Apellido');
           const extracId = localStorage.getItem('ID_Account');
           
+          this.editedItem.fecha_creacion = this.getTodayDate();
+          
           const nombreCompleto = `${extracName} ${extractApellido}`;
+          this.editedItem.name_crea = nombreCompleto;
           if (existingRuts.includes(this.editedItem.cliente)) {
             console.log('El RUT existe, Subiendo datos...');
-            console.log(this.editItem);
+            console.log(this.editedItem);
             const { isValid, errorMessages } = this.validateFields();
             if (isValid) {
               const url = `http://127.0.0.1:8000/api/Tiques/`;
@@ -592,7 +636,8 @@
                 estado: this.editedItem.estado,
                 criticidad: this.editedItem.criticidad,
                 usuario_crea: extracId,
-                name_crea: nombreCompleto
+                name_crea: nombreCompleto,
+                costo:this.editedItem.costo
               }, {
                 headers: {
                   Authorization: `Token ${token}`
@@ -601,6 +646,7 @@
               .then(response => {
                 console.log('Datos enviados correctamente:', response.data);
                 this.TiquesData.push(this.editedItem); // Agregar el nuevo Tique a la lista
+                this.ObtenerTiques();
                 this.dialog = false; // Cierra el diálogo
               })
               .catch(error => {

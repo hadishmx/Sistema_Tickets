@@ -30,7 +30,6 @@ const vuetify = createVuetify({
 
 
 
-
 // Añadir interceptor para incluir el token en cada petición si está disponible
 axiosInstance.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token');

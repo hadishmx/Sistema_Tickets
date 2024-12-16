@@ -8,16 +8,19 @@
         <ul class="nav-links" >
           <template v-if="!isAuthenticated">
             <router-link to="/"><li><a href="/"><v-btn variant="text" color="">Inicio</v-btn></a></li></router-link>
-            <router-link to="/Contact"><li><a href="/"><v-btn variant="text" color="">Contactanos</v-btn></a></li></router-link>
+            <router-link to="/Contact"><li><a href="/"><v-btn variant="text" color="">Contacto</v-btn></a></li></router-link>
             <router-link to="/About"><li><a href="/"><v-btn variant="text" color="">Nosotros</v-btn></a></li></router-link>
+            <router-link to="/PublicTiqueList"><li><a href="/"><v-btn variant="text" color="">Tiques</v-btn></a></li></router-link>
           </template>
           <template v-else>
             <router-link to="/InicioUser"><li><a href="/"><v-btn variant="text" color="">Inicio</v-btn></a></li></router-link>
             <router-link to="/AccountsUserList" ><li><a href="/"><v-btn variant="text" color="">Cuentas</v-btn></a></li></router-link>
+            <router-link to="/TipoTiques" ><li><a href="/"><v-btn variant="text" color="">Lista Tipo de Tiques</v-btn></a></li></router-link>
             <router-link to="/ClienteList"><li><a href="/"><v-btn variant="text" color="">Clientes</v-btn></a></li></router-link>
             <router-link to="/TiqueList"><li><a href="/"><v-btn variant="text" color="">Tiques</v-btn></a></li></router-link>
             <router-link to="/Contact"><li><a href="/"><v-btn variant="text" color="">Contacto</v-btn></a></li></router-link>
             <router-link to="/About"><li><a href="/"><v-btn variant="text" color="">Nosotros</v-btn></a></li></router-link>
+            
           </template>
         </ul>
         <ul class="sesions-links">
@@ -60,6 +63,10 @@ import ClienteList from './components/Cliente-List.vue';
 import AccountsUserList from './components/AccountsUser-List.vue';
 import Contact from './components/Contact.vue';
 import InicioUser from './components/Inicio-User.vue';
+import TipoTiques from './components/Tipo-Tiques.vue';
+import PublicTiqueList from './components/PublicTique-List.vue';
+import Confirmation from './components/Confirmation.vue';
+import Verificar from './components/Verificar.vue';
 
 
 export default {
@@ -69,11 +76,15 @@ export default {
     About,
     RegisterUser,
     Login,
+    Confirmation,
     AccountUser,
     TiqueList,
     ClienteList,
     AccountsUserList,
     InicioUser,
+    TipoTiques,
+    PublicTiqueList,
+    Verificar
   },
   data() {
     return {
@@ -157,7 +168,7 @@ header {
   color: white;
   text-decoration: none;
   font-weight: bold;
-  padding: 5px 10px;
+  padding: 5px 5px;
   transition: color 0.3s ease;
 }
 

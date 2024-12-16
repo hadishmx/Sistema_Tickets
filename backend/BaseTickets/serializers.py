@@ -57,51 +57,31 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Prevenir que usuarios fuera del grupo 'Gerente General' modifiquen 'is_active'
         request = self.context['request']
-        gerente_general_group = Group.objects.get(name="Director General")
+        gerente_general_group = Group.objects.get(name="Gerente General")
         
         if gerente_general_group not in request.user.groups.all():
             validated_data.pop('is_active', None)
         
         return super().update(instance, validated_data)
 
+
         
 class UsuarioSerializer(serializers.ModelSerializer):
     grupos = GroupSerializer(source='tipo', required=False)  # Usa 'tipo' como fuente para el grupo asociado
     fecha_nacimiento = serializers.DateField(format='%d-%m-%Y')
-
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  # Sigue aceptando el ID del User
+    
     class Meta:
         model = Usuario
         fields = ['user', 'rut', 'nombre', 'apellido', 'fecha_nacimiento', 'telefono', 'correo', 'avatar', 'grupos']
 
     def create(self, validated_data):
-        # Obtener el usuario asociado
-        user = validated_data.pop('user')  # Extrae el usuario
-        
-        # Si no se incluye 'tipo' (grupo) en validated_data, se establece como None
-        tipo = validated_data.pop('tipo', None)
-        
-        # Crear el modelo Usuario
-        usuario = Usuario.objects.create(
-            user=user,  # Aquí se relaciona el Usuario con el User
-            rut=validated_data.get('rut'),
-            nombre=validated_data.get('nombre'),
-            apellido=validated_data.get('apellido'),
-            fecha_nacimiento=validated_data.get('fecha_nacimiento'),
-            telefono=validated_data.get('telefono'),
-            correo=validated_data.get('correo'),
-            avatar=validated_data.get('avatar'),
-            tipo=tipo  # Relaciona el tipo de grupo
-        )
+        user = validated_data.pop('user')  # Extrae el objeto User
+        usuario = Usuario.objects.create(user=user, **validated_data)
         return usuario
 
 
 
-class TiqueSerializers(serializers.ModelSerializer):
-
-    rut_cliente = serializers.CharField(source='cliente.rut', read_only=True)
-    class Meta:
-        model = Tique
-        fields = '__all__'  # O especifica los campos que necesites
 
 class ClienteSerializers(serializers.ModelSerializer):
     fecha_nacimiento = serializers.DateField(format='%d-%m-%Y')
@@ -111,6 +91,8 @@ class ClienteSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 class EstadoTiqueSerializers(serializers.ModelSerializer):
+
+
     class Meta:
         model = EstadoTique
         fields = '__all__'
@@ -129,3 +111,39 @@ class AreaSerializers(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = '__all__'
+
+class TiqueSerializers(serializers.ModelSerializer):
+    tipo = serializers.SlugRelatedField(
+        queryset=TipoTique.objects.all(),
+        slug_field='nombre')  # Permite identificar el TipoTique por su nombre
+    
+    area = serializers.SlugRelatedField(
+        queryset=Area.objects.all(),
+        slug_field='nombre')
+    
+    criticidad = serializers.SlugRelatedField(
+        queryset=Criticidad.objects.all(),
+        slug_field='nombre')
+    
+    estado = serializers.SlugRelatedField(
+        queryset=EstadoTique.objects.all(),
+        slug_field='nombre')
+    
+
+    rut_cliente = serializers.CharField(source='cliente.rut', read_only=True)
+    class Meta:
+        model = Tique
+        fields = '__all__'  # O especifica los campos que necesites
+
+    def create(self, validated_data):
+        tipo_nombre = validated_data['tipo']
+        tipo = TipoTique.objects.get(nombre=tipo_nombre)  # Buscar el tipo por su nombre
+        validated_data['tipo'] = tipo  # Asignamos el objeto 'TipoTique' en lugar del nombre
+        return super().create(validated_data)
+
+class ContactFormSerializer(serializers.Serializer):
+    nombre = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    TituloAsunto = serializers.CharField(max_length=100)
+    telefono = serializers.CharField(max_length=9)
+    mensaje = serializers.CharField(max_length=500)

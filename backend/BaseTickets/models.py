@@ -2,6 +2,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User,Group
 import uuid
+import os
 
 # Create your models here.
 
@@ -15,6 +16,16 @@ class Usuario(models.Model):
     correo = models.EmailField(verbose_name="Correo Electrónico Usuario")
     avatar = models.ImageField(verbose_name="Avatar Usuario", upload_to="profile", null=True, blank=True)
     tipo = models.ForeignKey(Group, verbose_name="Tipo de Usuario", on_delete=models.CASCADE, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Si ya existe una imagen y es diferente de la nueva, elimina la anterior
+        if self.pk:
+            old_avatar = Usuario.objects.filter(pk=self.pk).first().avatar
+            if old_avatar and old_avatar != self.avatar:
+                if os.path.isfile(old_avatar.path):  # Asegúrate de que el archivo existe
+                    os.remove(old_avatar.path)  # Elimina el archivo
+
+        super().save(*args, **kwargs)
     
     def __str__(self) -> str:
         return self.nombre + " " + self.apellido
@@ -22,8 +33,8 @@ class Usuario(models.Model):
 #------------------------------------------------------------No se utilizan los de arriba -----------------------------------
 
 class Criticidad(models.Model):
-    nombre = models.CharField(primary_key=True, max_length=50, verbose_name="Nombre Criticidad")
-    valor = models.PositiveIntegerField(verbose_name="Valor")
+    id = models.AutoField(primary_key=True, editable=False, verbose_name='ID criticidad' )
+    nombre = models.CharField(max_length=50, verbose_name="Nombre Criticidad")
 
     def __str__(self) -> str:
         return self.nombre
@@ -42,26 +53,29 @@ class Cliente(models.Model):
         return self.nombre + " " + self.apellido
 
 class EstadoTique(models.Model):
-    nombre = models.CharField(primary_key=True, max_length=50, verbose_name="Nombre EstadoTique")
+    id = models.AutoField(primary_key=True, editable=False, verbose_name='ID Estado Tique' )
+    nombre = models.CharField(max_length=50, verbose_name="Nombre EstadoTique")
 
     def __str__(self) -> str:
         return self.nombre
 
 class TipoTique(models.Model):
-    nombre = models.CharField(primary_key=True, max_length=50, verbose_name="Nombre TipoTique")
-    
-    def __str__(self) -> str:
+    id = models.AutoField(primary_key=True, editable=False, verbose_name='ID tipo tique' )
+    nombre = models.CharField(max_length=50, unique=True, verbose_name="Nombre TipoTique")
+
+    def __str__(self):
         return self.nombre
     
 class Area(models.Model):
-    nombre = models.CharField(primary_key=True, max_length=50, verbose_name="Nombre Area")
+    id = models.AutoField(primary_key=True, editable=False, verbose_name='ID Area' )
+    nombre = models.CharField(max_length=50, verbose_name="Nombre Area")
     
     def __str__(self) -> str:
         return self.nombre
         
 
 class Tique(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID Tique")
+    id = models.AutoField(primary_key=True, editable=False, verbose_name='ID tique')
     fecha_creacion = models.DateField(auto_now_add=True,verbose_name="Fecha creacion")
     problema = models.TextField(verbose_name="Detalle Problema")
     servicio = models.TextField(verbose_name="Detalle Servicio")
@@ -71,7 +85,10 @@ class Tique(models.Model):
     tipo = models.ForeignKey(TipoTique, verbose_name="Tipo", on_delete=models.CASCADE)
     estado = models.ForeignKey(EstadoTique, verbose_name="Estado", on_delete=models.CASCADE, null=True, blank=True)
     criticidad = models.ForeignKey(Criticidad, verbose_name="Estado", on_delete=models.CASCADE)
+    costo = models.DecimalField(verbose_name="Precio trabajo",max_digits=10, decimal_places=2 ,null=True, blank=True)
+    estadopago = models.BooleanField(verbose_name="Estado pago", null=True, blank=True, default=False)
     fecha_cierre = models.DateField(verbose_name="Fecha cierre",null=True, blank=True)
+    fecha_pago = models.DateTimeField(null=True, blank=True)
     usuario_crea = models.ForeignKey(User, verbose_name="Usuario Crea", on_delete=models.CASCADE, null=True, blank=True, related_name='%(class)s_usuario_crea')
     usuario_cierra = models.ForeignKey(User, verbose_name="Usuario Cierra", on_delete=models.CASCADE, null=True, blank=True, related_name='%(class)s_usuario_cierra')
     name_crea = models.TextField(verbose_name="Ultima modificacion crea",null=True,blank=True)

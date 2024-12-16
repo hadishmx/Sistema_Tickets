@@ -35,16 +35,22 @@ export default {
   
         this.token = response.data.token;  //guardar token en una variable
         this.user_id = response.data.user.id;
+        this.Nombre = response.data.Nombre;
+        this.Apellido = response.data.Apellido;
+        this.Grupo = response.data.user.grupos[0].name;
         
 
         // Guardadado en local storage
         localStorage.setItem('access_token', this.token); //guarda el token en el local
         localStorage.setItem('ID_Account', this.user_id);
+        localStorage.setItem('Nombre', this.Nombre);
+        localStorage.setItem('Apellido', this.Apellido);
+        localStorage.setItem('Grupo', this.Grupo);
         eventBus.state.isAuthenticated = true;
 
         console.log('Token guardado:', this.token); 
         this.axios.defaults.headers.common['Authorization'] = `Token ${this.token}`; // guardar token en la cabezera
-        this.$router.push({ name: 'AccountUser' }); // redireccion a account
+        this.$router.push({ name: 'InicioUser' }); // redireccion a account
         console.log(this.axios.defaults.headers.common['Authorization']); //verificar si token esta en la cabezera
         console.log(response.data.error);
         } catch (error) { // en caso de error de credenciales alertará al usuario
@@ -66,7 +72,7 @@ export default {
           }
         } else {
           // Error no relacionado con la respuesta
-          this.errorMessage = 'Error de red. Por favor, compruebe su conexión.';
+          this.errorMessage = 'Error de red. Por favor, Intente mas tarde.';
           alert(this.errorMessage);
         }
         console.error('Error al iniciar sesión:', error);
